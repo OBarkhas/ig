@@ -1,5 +1,6 @@
 "use client";
 
+import { jwtDecode } from "jwt-decode";
 import {
   createContext,
   Dispatch,
@@ -11,47 +12,49 @@ import {
 } from "react";
 
 type User = {
-  email: string;
-  password: string;
-  username: string;
+  _id: string;
+  Email: string;
+  Password: string;
+  Username: string;
   bio: string | null;
   profilePicture: string | null;
+  followers: string | null;
+  following: string | null;
 };
 
 type AuthContextType = {
   user: User | null;
   setUser: Dispatch<SetStateAction<User | null>>;
-  login: (email: string, password: string) => Promise<void>;
+  setToken: Dispatch<SetStateAction<string | null>>;
+  token: string | null;
 };
 
+export type decodedtokentype = {
+  data: User;
+};
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    // if (typeof window !== "undefined") return;
+
+    const localToken = localStorage.getItem("token");
+
+    if (localToken) {
+      setToken(localToken);
+      const decodedtoken: decodedtokentype = jwtDecode(localToken);
+      setUser(decodedtoken.data);
     }
   }, []);
-
-  const login = async (email: string, password: string) => {
-    const response = await fetch("http://localhost:5555/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const userData = await response.json();
-    localStorage.setItem("user", JSON.stringify(userData));
-    setUser(userData);
-  };
 
   const values = {
     user,
     setUser,
-    login,
+    token,
+    setToken,
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;

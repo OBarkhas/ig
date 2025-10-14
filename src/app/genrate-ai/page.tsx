@@ -3,12 +3,17 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X } from "@/icons/Vector";
+import { useUser } from "@/providers/AuthProvider";
 import { handleUpload, upload } from "@vercel/blob/client";
+import { Captions, Images, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { json } from "stream/consumers";
 
 const Page = () => {
   const router = useRouter();
+  const { token } = useUser();
+  const [input, setInput] = useState("");
   const [prompt, setPrompt] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -46,10 +51,6 @@ const Page = () => {
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
       const blob = await response.blob();
       const imageURL = URL.createObjectURL(blob);
 
@@ -59,12 +60,29 @@ const Page = () => {
         access: "public",
         handleUploadUrl: "/api/upload",
       });
-      setImageUrl(imageURL);
+      setImageUrl(uploaded.url);
     } catch (error) {
       console.error("Failed to generate image:", error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const createPost = async () => {
+    const response = await fetch("http://localhost:5555/post", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        caption: input,
+        images: [imageUrl],
+      }),
+    });
+    const newPost = await response.json();
+    alert("Post created successful!");
+    router.push("/");
   };
 
   return (
@@ -102,6 +120,7 @@ const Page = () => {
           {isLoading ? "Generating..." : "Generate"}
         </Button>
 
+        <Button onClick={createPost}>Create post</Button>
         {imageUrl && (
           <div className="mt-6">
             <h3 className="mb-2 font-medium">Generated Image:</h3>
@@ -110,6 +129,13 @@ const Page = () => {
           </div>
         )}
       </div>
+      <Input
+        id="input"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Explain about this image"
+        className="mb-4"
+      />
     </div>
   );
 };

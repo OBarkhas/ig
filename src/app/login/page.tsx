@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useUser } from "@/providers/AuthProvider";
+import { decodedtokentype, useUser } from "@/providers/AuthProvider";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { IgLogo } from "@/icons/ig-logo";
+import { jwtDecode } from "jwt-decode";
 
 const LoginPage = () => {
-  const { setUser, user } = useUser();
+  const { setUser, token, setToken } = useUser();
   const { push } = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,21 +27,23 @@ const LoginPage = () => {
       }),
     });
     if (response.ok) {
-      const userData = await response.json();
-      localStorage.setItem("user", JSON.stringify(userData));
-      setUser(userData);
+      const token = await response.json();
+      localStorage.setItem("token", token);
+      setToken(token);
+      const decodedtoken: decodedtokentype = jwtDecode(token);
+      setUser(decodedtoken.data);
       push("/");
       toast.success("orchlo byr hurgi");
     } else {
-      toast.error("pass chin hudla bna");
+      toast.error("pass esul email chin hudla bna");
     }
   };
 
   useEffect(() => {
-    if (user) {
+    if (token) {
       push("/");
     }
-  }, [user]);
+  }, [token]);
 
   return (
     <div>

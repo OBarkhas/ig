@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { IgLogo } from "@/icons/ig-logo";
+import { toast } from "sonner";
+import { decodedtokentype, useUser } from "@/providers/AuthProvider";
+import { jwtDecode } from "jwt-decode";
 
 type Credentials = {
   email: string;
@@ -10,9 +13,10 @@ type Credentials = {
   username: string;
 };
 
-const SignupPage = () => {
+const Page = () => {
   const router = useRouter();
-
+  const { push } = useRouter();
+  const { setUser, setToken } = useUser();
   const [credentials, setCredentials] = useState<Credentials>({
     email: "",
     password: "",
@@ -32,11 +36,17 @@ const SignupPage = () => {
       }),
     });
 
-    const data = await response.json();
-    localStorage.setItem("user", JSON.stringify(data.user));
-
-    alert("Sign up successful!");
-    router.push("/login");
+    if (response.ok) {
+      const token = await response.json();
+      localStorage.setItem("token", token);
+      setToken(token);
+      const decodedtoken: decodedtokentype = jwtDecode(token);
+      setUser(decodedtoken.data);
+      toast.success("orchlo byr hurgi");
+      push("/");
+    } else {
+      toast.error("pass esul email chin ali hedin hereglegdsen bna");
+    }
   };
 
   return (
@@ -91,4 +101,4 @@ const SignupPage = () => {
   );
 };
 
-export default SignupPage;
+export default Page;
