@@ -4,7 +4,7 @@ import { InstgramLoL } from "@/icons/Instgram";
 import { useUser } from "@/providers/AuthProvider";
 import { useState, useEffect } from "react";
 import { Footer } from "./_components/Footer";
-import { Heart } from "lucide-react";
+import { Heart, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -105,7 +105,10 @@ const Page = () => {
                 className="bg-white rounded-lg shadow-md overflow-hidden"
               >
                 <div className="flex items-center justify-between px-4 py-3">
-                  <div className="flex items-center">
+                  <div
+                    className="flex items-center cursor-pointer"
+                    onClick={() => push(`/AllAboutThisUser/${post._id}`)}
+                  >
                     <div className="w-10 h-10 bg-gray-300 rounded-full mr-3"></div>
                     <p className="font-semibold text-sm">
                       {post.user.Username}
@@ -136,18 +139,23 @@ const Page = () => {
                     {post.caption}
                   </p>
                 </div>
-
-                <button
-                  onClick={() => postLike(post._id)}
-                  className="flex items-center gap-1 text-gray-600 hover:text-red-500 px-4 pb-3"
-                >
-                  {post.like?.includes(myId ?? "") ? (
-                    <Heart color="red" fill="red" />
-                  ) : (
-                    <Heart />
-                  )}
-                  <span>{post.like.length}</span>
-                </button>
+                <div className="flex">
+                  <button
+                    onClick={() => postLike(post._id)}
+                    className="flex items-center gap-1 text-gray-600 hover:text-red-500 px-4 pb-3"
+                  >
+                    {post.like?.includes(myId ?? "") ? (
+                      <Heart color="red" fill="red" />
+                    ) : (
+                      <Heart />
+                    )}
+                    <span>{post.like.length}</span>
+                  </button>
+                  <MessageCircle
+                    onClick={() => push(`/post/${post._id}`)}
+                    className="cursor-pointer"
+                  />
+                </div>
               </div>
             );
           })}
