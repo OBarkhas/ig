@@ -1,20 +1,20 @@
 "use client";
 
 import { InstgramLoL } from "@/icons/Instgram";
-import { useUser } from "@/providers/AuthProvider";
+import { User, useUser } from "@/providers/AuthProvider";
 import { useState, useEffect } from "react";
 import { Footer } from "./_components/Footer";
 import { Heart, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-
-type User = {
-  _id: string;
-  Username: string;
-  followers: string[];
-};
-
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 type PostType = {
   _id: string;
   caption: string;
@@ -28,6 +28,7 @@ const Page = () => {
   const { user, token } = useUser();
   const [posts, setPosts] = useState<PostType[]>([]);
   const myId = user?._id;
+  const router = useRouter();
 
   const getPosts = async () => {
     const res = await fetch("http://localhost:5555/posts", {
@@ -84,6 +85,10 @@ const Page = () => {
     }
   };
 
+  const handleClick = (userId: string) => {
+    router.push(`/AllAboutThisUser/${userId}`);
+  };
+
   return (
     <div>
       <div className="fixed top-0 flex justify-between w-screen bg-white px-8 py-4 z-10">
@@ -107,7 +112,7 @@ const Page = () => {
                 <div className="flex items-center justify-between px-4 py-3">
                   <div
                     className="flex items-center cursor-pointer"
-                    onClick={() => push(`/AllAboutThisUser/${post._id}`)}
+                    onClick={() => handleClick(post.user._id)}
                   >
                     <div className="w-10 h-10 bg-gray-300 rounded-full mr-3"></div>
                     <p className="font-semibold text-sm">
@@ -125,13 +130,25 @@ const Page = () => {
                   )}
                 </div>
 
-                {post.images?.length > 0 && (
+                {/* {post.images?.length > 0 && (
                   <img
                     src={post.images[0]}
                     alt="post"
                     className="w-full object-cover max-h-[500px]"
                   />
-                )}
+                )} */}
+
+                <Carousel className="w-full max-w-xs">
+                  <CarouselContent>
+                    {post.images.map((postImage, Index) => (
+                      <CarouselItem key={Index}>
+                        <img src={postImage} />
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel>
 
                 <div className="px-4 py-3">
                   <p className="text-sm">
@@ -139,6 +156,7 @@ const Page = () => {
                     {post.caption}
                   </p>
                 </div>
+
                 <div className="flex">
                   <button
                     onClick={() => postLike(post._id)}

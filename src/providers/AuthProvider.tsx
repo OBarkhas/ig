@@ -12,7 +12,7 @@ import {
   useState,
 } from "react";
 
-type User = {
+export type User = {
   _id: string;
   Email: string;
   Password: string;

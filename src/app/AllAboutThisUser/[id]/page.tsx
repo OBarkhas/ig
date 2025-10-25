@@ -1,68 +1,66 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useUser } from "@/providers/AuthProvider";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 type Post = {
   _id: string;
   images: string[];
+  caption: string;
 };
 
-type OtherUser = {
+type ProfileUser = {
   _id: string;
-  Username: string;
+  Username?: string;
   profilePicture?: string;
   bio?: string;
   followers?: string[];
   following?: string[];
 };
 
-export default function ProfilePage() {
+export default function OtherUserProfilePage() {
   const { user, token } = useUser();
   const params = useParams();
-  const userId = params?.userId as string | undefined;
+  const [profileUser, setProfileUser] = useState<ProfileUser | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [profileUser, setProfileUser] = useState<OtherUser | null>(null);
-
-  const fetchUserPosts = async () => {
-    try {
-      const res = await fetch(`http://localhost:5555/posts/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Failed to fetch posts");
-      const data = await res.json();
-      setPosts(data);
-    } catch (err) {
-      console.error("Error fetching posts:", err);
-    }
-  };
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const userId = params.id;
+  const isOwnProfile = userId === user?._id;
+  const router = useRouter();
 
   const fetchUserInfo = async () => {
-    try {
-      const res = await fetch(`http://localhost:5555/user/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Failed to fetch user info");
-      const data = await res.json();
-      setProfileUser(data);
-    } catch (err) {
-      console.error("Error fetching user:", err);
-    }
+    const response = await fetch(`http://localhost:5555/user/${userId}`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    const user = await response.json();
+    setProfileUser(user);
+  };
+
+  const fetchUserPosts = async () => {
+    const response = await fetch(`http://localhost:5555/user-posts/${userId}`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    const posts = await response.json();
+    setPosts(posts);
   };
 
   useEffect(() => {
     if (token && userId) {
-      fetchUserPosts();
       fetchUserInfo();
+      fetchUserPosts();
     }
-  }, [token, userId]);
-
-  const isOwnProfile = userId === user?._id;
+  }, [userId, token]);
 
   return (
     <div className="flex flex-col items-center w-full max-w-md mx-auto min-h-screen">
       <div className="w-full p-4 text-center border-b border-gray-300">
+        <div className="flex items-center justify-between">
+          <Button onClick={() => router.push("/")}>Back</Button>
+        </div>
+
         {profileUser?.profilePicture ? (
           <img
             src={profileUser.profilePicture}
@@ -95,15 +93,35 @@ export default function ProfilePage() {
       </div>
 
       <div className="flex-1 w-full p-4">
-        {posts.length > 0 ? (
+        {selectedPost ? (
+          <div className="flex flex-col items-center">
+            <Button
+              variant="secondary"
+              className="mb-4"
+              onClick={() => setSelectedPost(null)}
+            >
+              Back to posts
+            </Button>
+            {selectedPost.images.map((img, idx) => (
+              <img
+                key={idx}
+                src={img}
+                alt="Post"
+                className="object-cover w-full rounded mb-2"
+              />
+            ))}
+            <p className="text-sm mt-2">{selectedPost.caption}</p>
+          </div>
+        ) : posts.length > 0 ? (
           <div className="grid grid-cols-3 gap-2">
             {posts.map((post) =>
-              post.images.map((img, index) => (
+              post.images.map((img, idx) => (
                 <img
-                  key={index}
+                  key={idx}
                   src={img}
                   alt="Post"
-                  className="object-cover w-full h-32 rounded"
+                  className="object-cover w-full h-32 rounded cursor-pointer"
+                  onClick={() => setSelectedPost(post)}
                 />
               ))
             )}

@@ -15,8 +15,8 @@ const Page = () => {
   const { token } = useUser();
   const [input, setInput] = useState("");
   const [prompt, setPrompt] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string[]>([]);
 
   const HF_API_KEY = process.env.HF_API_KEY;
 
@@ -27,7 +27,6 @@ const Page = () => {
   const genrateImage = async () => {
     if (!prompt.trim()) return;
     setIsLoading(true);
-    setImageUrl("");
 
     try {
       const headers = {
@@ -60,7 +59,10 @@ const Page = () => {
         access: "public",
         handleUploadUrl: "/api/upload",
       });
-      setImageUrl(uploaded.url);
+
+      setImageUrl((prev) => {
+        return [...prev, uploaded.url];
+      });
     } catch (error) {
       console.error("Failed to generate image:", error);
     } finally {
@@ -77,7 +79,7 @@ const Page = () => {
       },
       body: JSON.stringify({
         caption: input,
-        images: [imageUrl],
+        images: imageUrl,
       }),
     });
     const newPost = await response.json();
@@ -121,13 +123,22 @@ const Page = () => {
         </Button>
 
         <Button onClick={createPost}>Create post</Button>
-        {imageUrl && (
+        {/* {imageUrl && (
           <div className="mt-6">
             <h3 className="mb-2 font-medium">Generated Image:</h3>
-            <img src={imageUrl} alt="AI Generated" className="rounded shadow" />
             <p className="text-sm break-words mt-2">URL: {imageUrl}</p>
           </div>
-        )}
+        )} */}
+        {imageUrl.map((url) => {
+          return (
+            <img
+              src={url}
+              key={url}
+              alt="AI Generated"
+              className="rounded shadow"
+            />
+          );
+        })}
       </div>
       <Input
         id="input"

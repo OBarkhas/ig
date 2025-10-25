@@ -9,7 +9,7 @@ export const Footer = () => {
       <Link href="/">
         <House />
       </Link>
-      <Link href="/">
+      <Link href="/search">
         <Search />
       </Link>
       <Link href="/create-post">

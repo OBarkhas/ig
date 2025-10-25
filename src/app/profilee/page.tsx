@@ -11,6 +11,7 @@ type Post = {
 export default function ProfilePage() {
   const { user, token } = useUser();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   const fetchUserPosts = async () => {
     const res = await fetch(`http://localhost:5555/posts/${user?._id}`, {
@@ -60,7 +61,25 @@ export default function ProfilePage() {
       </div>
 
       <div className="flex-1 w-full p-4">
-        {posts.length > 0 ? (
+        {/* Хэрвээ post сонгогдсон бол зөвхөн тэрийг харуулна */}
+        {selectedPost ? (
+          <div className="flex flex-col items-center">
+            <button
+              onClick={() => setSelectedPost(null)}
+              className="text-blue-500 mb-3 underline"
+            >
+              ← Back to posts
+            </button>
+            {selectedPost.images.map((img, i) => (
+              <img
+                key={i}
+                src={img}
+                alt="Post detail"
+                className="object-cover w-full rounded-lg mb-3"
+              />
+            ))}
+          </div>
+        ) : posts.length > 0 ? (
           <div className="grid grid-cols-3 gap-2">
             {posts.map((post) =>
               post.images.map((img, index) => (
@@ -68,27 +87,14 @@ export default function ProfilePage() {
                   key={index}
                   src={img}
                   alt="Post"
-                  className="object-cover w-full h-32 rounded"
+                  className="object-cover w-full h-32 rounded cursor-pointer"
+                  onClick={() => setSelectedPost(post)} // ← энд товшилт
                 />
               ))
             )}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-64 text-gray-500">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-12 w-12 mb-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 5h18M3 10h18M3 15h18M3 20h18"
-              />
-            </svg>
             <p className="text-center">No posts yet</p>
           </div>
         )}
