@@ -24,7 +24,7 @@ const Page = () => {
   });
 
   const signUp = async () => {
-    const response = await fetch("`${process.env.BACKEND_URL}`sign-up", {
+    const response = await fetch(`${process.env.BACKEND_URL}/sign-up`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -35,7 +35,6 @@ const Page = () => {
         Username: credentials.username,
       }),
     });
-
     if (response.ok) {
       const token = await response.json();
       localStorage.setItem("token", token);
