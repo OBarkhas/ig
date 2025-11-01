@@ -24,7 +24,7 @@ const Page = () => {
   });
 
   const signUp = async () => {
-    const response = await fetch("http://localhost:5555/sign-up", {
+    const response = await fetch("http://localhost:4000/sign-up", {
       method: "POST",
       headers: {
         "Content-type": "application/json",

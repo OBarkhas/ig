@@ -71,7 +71,7 @@ const Page = () => {
   };
 
   const createPost = async () => {
-    const response = await fetch("http://localhost:5555/post", {
+    const response = await fetch("http://localhost:4000/post", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

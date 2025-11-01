@@ -19,7 +19,7 @@ export default function PostCommentsPage() {
   const [newComment, setNewComment] = useState("");
   const router = useRouter();
   const getComments = async () => {
-    const res = await fetch(`http://localhost:5555/comment/get/${id}`, {
+    const res = await fetch(`http://localhost:4000/comment/get/${id}`, {
       headers: { authorization: `Bearer ${token}` },
     });
     if (res.ok) {
@@ -28,7 +28,7 @@ export default function PostCommentsPage() {
   };
 
   const createComment = async () => {
-    const res = await fetch("http://localhost:5555/comment/create", {
+    const res = await fetch("http://localhost:4000/comment/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

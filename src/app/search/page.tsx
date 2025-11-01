@@ -13,7 +13,7 @@ const Page = () => {
 
   const getUsers = async () => {
     const response = await fetch(
-      `http://localhost:5555/users/${searchValue === "" ? null : searchValue}`,
+      `http://localhost:4000/users/${searchValue === "" ? null : searchValue}`,
       {
         method: "GET",
         headers: {
