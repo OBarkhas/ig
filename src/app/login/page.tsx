@@ -16,7 +16,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
 
   const login = async () => {
-    const response = await fetch("http://localhost:4000/login", {
+    const response = await fetch(`${process.env.BACKEND_URL}/login`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",

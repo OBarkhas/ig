@@ -13,7 +13,9 @@ const Page = () => {
 
   const getUsers = async () => {
     const response = await fetch(
-      `http://localhost:4000/users/${searchValue === "" ? null : searchValue}`,
+      `${process.env.BACKEND_URL}/users/${
+        searchValue === "" ? null : searchValue
+      }`,
       {
         method: "GET",
         headers: {

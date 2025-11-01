@@ -31,7 +31,7 @@ const Page = () => {
   const router = useRouter();
 
   const getPosts = async () => {
-    const res = await fetch("http://localhost:4000/posts", {
+    const res = await fetch(`${process.env.BACKEND_URL}/posts`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -50,12 +50,15 @@ const Page = () => {
   }, [token]);
 
   const postLike = async (postId: string) => {
-    const res = await fetch(`http://localhost:4000/toggle-like/${postId}`, {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await fetch(
+      `${process.env.BACKEND_URL}/toggle-like/${postId}`,
+      {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     if (res.ok) {
       await getPosts();
@@ -66,7 +69,7 @@ const Page = () => {
 
   const toggleFollow = async (followedUserId: string) => {
     const res = await fetch(
-      `http://localhost:4000/follow-toggle/${followedUserId}`,
+      `${process.env.BACKEND_URL}/follow-toggle/${followedUserId}`,
       {
         method: "POST",
         headers: {

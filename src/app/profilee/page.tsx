@@ -16,7 +16,7 @@ export default function ProfilePage() {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   const fetchUserPosts = async () => {
-    const res = await fetch(`http://localhost:4000/posts/${user?._id}`, {
+    const res = await fetch(`${process.env.BACKEND_URL}/posts/${user?._id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -27,7 +27,7 @@ export default function ProfilePage() {
   };
 
   // const editData = async () => {
-  //   const res = await fetch("http://localhost:4000/edit-user", {
+  //   const res = await fetch("`${process.env.BACKEND_URL}`edit-user", {
   //     method: "POST",
   //     headers: {
   //       Authorization: `Bearer ${token}`,

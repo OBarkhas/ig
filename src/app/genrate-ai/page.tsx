@@ -71,7 +71,7 @@ const Page = () => {
   };
 
   const createPost = async () => {
-    const response = await fetch("http://localhost:4000/post", {
+    const response = await fetch("`${process.env.BACKEND_URL}`post", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

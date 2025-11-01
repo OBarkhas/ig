@@ -32,7 +32,7 @@ export default function OtherUserProfilePage() {
   const router = useRouter();
 
   const fetchUserInfo = async () => {
-    const response = await fetch(`http://localhost:4000/user/${userId}`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/user/${userId}`, {
       headers: { authorization: `Bearer ${token}` },
     });
     const user = await response.json();
@@ -40,9 +40,12 @@ export default function OtherUserProfilePage() {
   };
 
   const fetchUserPosts = async () => {
-    const response = await fetch(`http://localhost:4000/user-posts/${userId}`, {
-      headers: { authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(
+      `${process.env.BACKEND_URL}/user-posts/${userId}`,
+      {
+        headers: { authorization: `Bearer ${token}` },
+      }
+    );
     const posts = await response.json();
     setPosts(posts);
   };
