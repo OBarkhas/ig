@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { Footer } from "../_components/Footer";
 import { useUser } from "@/providers/AuthProvider";
+import { Button } from "@/components/ui/button";
+// import { toast } from "sonner";
 
 type Post = {
   _id: string;
@@ -24,6 +26,26 @@ export default function ProfilePage() {
     setPosts(data);
   };
 
+  // const editData = async () => {
+  //   const res = await fetch("http://localhost:5555/edit-user", {
+  //     method: "POST",
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       Username: user?.Username,
+  //     }),
+  //   });
+  //   if (res.ok) {
+  //     toast.success("sucess");
+  //   }else{
+  //     toast.error("something went wrong")
+  //   }
+  //   const data = await res.json();
+  //   setPosts(data);
+  // };
+
   useEffect(() => {
     if (token) fetchUserPosts();
   }, [token]);
@@ -40,6 +62,7 @@ export default function ProfilePage() {
         ) : (
           <div className="w-24 h-24 rounded-full mx-auto mb-2 bg-gray-300" />
         )}
+        <Button>Edit</Button>
 
         <div className="text-lg font-semibold">{user?.Username}</div>
         <div className="text-sm text-gray-600">{user?.bio}</div>
@@ -61,7 +84,6 @@ export default function ProfilePage() {
       </div>
 
       <div className="flex-1 w-full p-4">
-        {/* Хэрвээ post сонгогдсон бол зөвхөн тэрийг харуулна */}
         {selectedPost ? (
           <div className="flex flex-col items-center">
             <button
@@ -88,7 +110,7 @@ export default function ProfilePage() {
                   src={img}
                   alt="Post"
                   className="object-cover w-full h-32 rounded cursor-pointer"
-                  onClick={() => setSelectedPost(post)} // ← энд товшилт
+                  onClick={() => setSelectedPost(post)}
                 />
               ))
             )}

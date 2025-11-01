@@ -12,18 +12,21 @@ const Page = () => {
   const router = useRouter();
 
   const getUsers = async () => {
-    const response = await fetch(`http://localhost:5555/users/${searchValue}`, {
-      method: "GET",
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      `http://localhost:5555/users/${searchValue === "" ? null : searchValue}`,
+      {
+        method: "GET",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
     const users = await response.json();
     setUsers(users);
   };
 
   useEffect(() => {
-    if (token && searchValue) getUsers();
+    if (token) getUsers();
   }, [searchValue, token]);
 
   const handleClick = (userId: string) => {

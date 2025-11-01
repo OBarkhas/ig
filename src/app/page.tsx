@@ -119,7 +119,6 @@ const Page = () => {
                       {post.user.Username}
                     </p>
                   </div>
-
                   {post.user._id !== myId && (
                     <Button
                       variant={isFollowed ? "secondary" : "default"}
