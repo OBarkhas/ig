@@ -28,7 +28,7 @@ export default function PostCommentsPage() {
   };
 
   const createComment = async () => {
-    const res = await fetch("`${process.env.BACKEND_URL}`comment/create", {
+    const res = await fetch(`${process.env.BACKEND_URL}/comment/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
